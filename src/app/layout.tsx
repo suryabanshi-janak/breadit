@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import '@/styles/globals.css';
 
 import Navbar from '@/components/Navbar';
+import { Toaster } from '@/components/ui/Toaster';
 
 export const metadata = {
   title: 'Breadit',
@@ -30,6 +31,8 @@ export default function RootLayout({
         <div className='container h-full pt-12 mx-auto max-w-7xl'>
           {children}
         </div>
+
+        <Toaster />
       </body>
     </html>
   );
