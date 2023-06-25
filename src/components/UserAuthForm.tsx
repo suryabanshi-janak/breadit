@@ -18,7 +18,7 @@ const UserAuthForm: React.FC<UserAuthFormProps> = ({ className, ...props }) => {
     setIsLoading(true);
 
     try {
-      throw new Error();
+      await signIn('google');
     } catch (error) {
       toast({
         title: 'There was a problem',
