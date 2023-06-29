@@ -13,9 +13,7 @@ const Layout = async ({
   const session = await getAuthSession();
 
   const subreddit = await db.subreddit.findFirst({
-    where: {
-      name: slug,
-    },
+    where: { name: slug },
     include: {
       posts: {
         include: {
@@ -30,12 +28,8 @@ const Layout = async ({
     ? undefined
     : await db.subscription.findFirst({
         where: {
-          subreddit: {
-            name: slug,
-          },
-          user: {
-            id: session.user.id,
-          },
+          subreddit: { name: slug },
+          user: { id: session.user.id },
         },
       });
 
