@@ -1,5 +1,7 @@
-import { db } from '@/lib/db';
 import { notFound } from 'next/navigation';
+import { db } from '@/lib/db';
+import Editor from '@/components/Editor';
+import { Button } from '@/components/ui/Button';
 
 interface PageProps {
   params: { slug: string };
@@ -25,6 +27,14 @@ const page = async ({ params }: PageProps) => {
             in r/{subreddit.name}
           </p>
         </div>
+      </div>
+
+      <Editor subredditId={subreddit.id} />
+
+      <div className='flex justify-end w-full'>
+        <Button type='submit' className='w-full' form='subreddit-post-form'>
+          Post
+        </Button>
       </div>
     </div>
   );
