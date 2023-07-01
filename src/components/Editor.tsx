@@ -92,6 +92,7 @@ const Editor = ({ subredditId }: { subredditId: string }) => {
 
   useEffect(() => {
     if (Object.keys(errors).length) {
+      // eslint-disable-next-line no-unused-vars
       for (const [_key, value] of Object.entries(errors)) {
         toast({
           title: 'Something went wrong',

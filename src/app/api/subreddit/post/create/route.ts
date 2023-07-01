@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { SubredditSubscriptionValidator } from '@/lib/validators/subreddit';
+import { PostValidator } from '@/lib/validators/post';
 
 export async function POST(req: Request) {
   try {
@@ -12,37 +12,36 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+    const { subredditId, title, content } = PostValidator.parse(body);
 
-    const { subredditId } = SubredditSubscriptionValidator.parse(body);
-
-    const subscriptionExists = await db.subscription.findFirst({
+    const subcriptionExists = await db.subscription.findFirst({
       where: {
         subredditId,
         userId: session.user.id,
       },
     });
 
-    if (subscriptionExists) {
-      return new Response('You are already subscribed to this subreddit.', {
-        status: 400,
-      });
+    if (!subcriptionExists) {
+      return new Response('Subscribe to post', { status: 400 });
     }
 
-    await db.subscription.create({
+    await db.post.create({
       data: {
         subredditId,
-        userId: session.user.id,
+        title,
+        content,
+        authorId: session.user.id,
       },
     });
 
-    return new Response(subredditId);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
+    return new Response('OK');
+  } catch (err) {
+    if (err instanceof z.ZodError) {
       return new Response('Invalid request data passed', { status: 422 });
     }
 
     return new Response(
-      'Could not subscribe to subreddit at this time, please try again later',
+      'Could not post to subreddit at this time, please try again later',
       {
         status: 500,
       }
