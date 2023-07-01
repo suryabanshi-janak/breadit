@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import Editor from '@/components/Editor';
 import { Button } from '@/components/ui/Button';
+import { Editor } from '@/components/Editor';
 
 interface PageProps {
   params: { slug: string };
