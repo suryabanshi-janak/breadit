@@ -1,7 +1,11 @@
+import { z } from 'zod';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { PostVoteValidator } from '@/lib/validators/vote';
-import { z } from 'zod';
+import { CachedPost } from '@/types/redis';
+import { redis } from '@/lib/redis';
+
+const CACHE_AFTER_UPVOTES = 1;
 
 export async function PATCH(req: Request) {
   try {
@@ -69,6 +73,25 @@ export async function PATCH(req: Request) {
         userId: session.user.id,
       },
     });
+
+    const votesAmt = post.votes.reduce((acc, vote) => {
+      if (vote.type === 'UP') return acc + 1;
+      if (vote.type === 'DOWN') return acc - 1;
+      return acc;
+    }, 0);
+
+    if (votesAmt >= CACHE_AFTER_UPVOTES) {
+      const cachedPayload: CachedPost = {
+        id: post.id,
+        title: post.title,
+        authorUsername: post.author.username ?? '',
+        content: JSON.stringify(post.content),
+        currentVote: voteType,
+        createdAt: post.createdAt,
+      };
+
+      await redis.hset(`post:${postId}`, cachedPayload);
+    }
 
     return new Response('OK');
   } catch (err) {
