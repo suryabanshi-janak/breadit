@@ -33,7 +33,7 @@ const PostVoteClient = ({
     setCurrentVote(initialVote);
   }, [initialVote]);
 
-  const { mutate: vote } = useMutation({
+  const { mutate: vote, isLoading } = useMutation({
     mutationFn: async (type: VoteType) => {
       const payload: PostVoteRequest = {
         voteType: type,
@@ -85,6 +85,7 @@ const PostVoteClient = ({
         size='sm'
         variant='ghost'
         aria-label='upvote'
+        disabled={isLoading}
       >
         <ArrowBigUp
           className={cn('h-5 w-5 text-zinc-700', {
@@ -107,6 +108,7 @@ const PostVoteClient = ({
         })}
         variant='ghost'
         aria-label='downvote'
+        disabled={isLoading}
       >
         <ArrowBigDown
           className={cn('h-5 w-5 text-zinc-700', {
